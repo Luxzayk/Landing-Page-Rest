@@ -6,33 +6,15 @@ const RESTAURANT = {
     city: "Huacho",
     address: "Av. Primavera 245, Huacho",
     // ✅ Cambia esto por el número real (Perú: 51 + número). Ej: 51987654321
-    whatsappNumber: "51933566289",
+    whatsappNumber: "51999999999",
     // Horario: Lun(1) .. Dom(0)
     schedule: {
-        1: {
-            open: "12:00",
-            close: "16:00"
-        }, // Lunes
-        2: {
-            open: "12:00",
-            close: "16:00"
-        }, // Martes
-        3: {
-            open: "12:00",
-            close: "16:00"
-        }, // Miércoles
-        4: {
-            open: "12:00",
-            close: "16:00"
-        }, // Jueves
-        5: {
-            open: "12:00",
-            close: "16:00"
-        }, // Viernes
-        6: {
-            open: "12:00",
-            close: "16:00"
-        }, // Sábado
+        1: { open: "12:00", close: "16:00" }, // Lunes
+        2: { open: "12:00", close: "16:00" }, // Martes
+        3: { open: "12:00", close: "16:00" }, // Miércoles
+        4: { open: "12:00", close: "16:00" }, // Jueves
+        5: { open: "12:00", close: "16:00" }, // Viernes
+        6: { open: "12:00", close: "16:00" }, // Sábado
         0: null, // Domingo cerrado
     },
     mapsQueryUrl: "https://www.google.com/maps/search/?api=1&query=Av.%20Primavera%20245%20Huacho"
@@ -106,14 +88,8 @@ const MENU_DATA = {
  * UTILIDADES
  ***********************/
 const money = (n) => `S/ ${Number(n).toFixed(2)}`;
-
-function qs(sel, root = document) {
-    return root.querySelector(sel);
-}
-
-function qsa(sel, root = document) {
-    return [...root.querySelectorAll(sel)];
-}
+const qs = (sel, root = document) => root.querySelector(sel);
+const qsa = (sel, root = document) => [...root.querySelectorAll(sel)];
 
 function parseTimeToMinutes(hhmm) {
     const [h, m] = hhmm.split(":").map(Number);
@@ -122,15 +98,12 @@ function parseTimeToMinutes(hhmm) {
 
 function getTodaySchedule() {
     const day = new Date().getDay();
-    return RESTAURANT.schedule[day]; // null => cerrado
+    return RESTAURANT.schedule[day];
 }
 
 function isOpenNow() {
     const sched = getTodaySchedule();
-    if (!sched) return {
-        open: false,
-        msg: "Hoy estamos cerrados. Atendemos de lunes a sábado."
-    };
+    if (!sched) return { open: false, msg: "Hoy estamos cerrados. Atendemos de lunes a sábado." };
 
     const now = new Date();
     const nowMin = now.getHours() * 60 + now.getMinutes();
@@ -143,280 +116,90 @@ function isOpenNow() {
         const h = Math.floor(minsLeft / 60);
         const m = minsLeft % 60;
         const leftStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
-        return {
-            open: true,
-            msg: `🟢 Abierto ahora • Cerramos en ${leftStr}.`
-        };
+        return { open: true, msg: `🟢 Abierto ahora • Cerramos en ${leftStr}.` };
     } else {
-        return {
-            open: false,
-            msg: `🔴 Cerrado ahora • Abrimos hoy de ${sched.open} a ${sched.close}.`
-        };
+        return { open: false, msg: `🔴 Cerrado ahora • Abrimos hoy de ${sched.open} a ${sched.close}.` };
     }
 }
 
 /***********************
- * RENDER DE CARDS
+ * WHATSAPP
+ ***********************/
+function buildGeneralWhatsAppMessage() {
+    const st = isOpenNow();
+    const now = new Date();
+    const dateStr = now.toLocaleString("es-PE", { dateStyle: "medium", timeStyle: "short" });
+
+    const lines = [
+        `Hola 👋, quiero consultar el *menú del día* en *${RESTAURANT.name}*`,
+        `🗓 ${dateStr}`,
+        ``,
+        `¿Qué opciones tienen hoy y qué tiempo aprox están manejando? 🙌`,
+        ``,
+        `Estado actual: ${st.open ? "🟢 Abierto" : "🔴 Cerrado"}`
+    ];
+    return lines.join("\n");
+}
+
+function buildDishWhatsAppMessage(product) {
+    const now = new Date();
+    const dateStr = now.toLocaleString("es-PE", { dateStyle: "medium", timeStyle: "short" });
+
+    const lines = [
+        `Hola 👋, quiero pedir este plato en *${RESTAURANT.name}*:`,
+        `🗓 ${dateStr}`,
+        ``,
+        `*${product.name}* — ${money(product.price)}`,
+        `${product.desc}`,
+        ``,
+        `¿Está disponible? ¿Tiempo aprox? 🙌`
+    ];
+    return lines.join("\n");
+}
+
+function waUrl(message) {
+    const encoded = encodeURIComponent(message);
+    return `https://wa.me/${RESTAURANT.whatsappNumber}?text=${encoded}`;
+}
+
+function updateGlobalWhatsLinks() {
+    const url = waUrl(buildGeneralWhatsAppMessage());
+    ["btnWhatsHero", "btnWhatsCTA", "fabWhatsapp", "btnWhatsMobile", "btnWhatsHeader"].forEach(id => {
+        const el = qs(`#${id}`);
+        if (el) el.href = url;
+    });
+
+    const footerPhone = qs("#footerPhone");
+    if (footerPhone) footerPhone.textContent = `+${RESTAURANT.whatsappNumber}`;
+}
+
+/***********************
+ * RENDER PRODUCTS
  ***********************/
 function renderProductCard(product, targetEl) {
     const el = document.createElement("article");
     el.className = "cardProd";
     el.innerHTML = `
-      <div class="cardProd__img">
-        <div class="cardProd__badge">${product.badge ?? "Plato"}</div>
+    <div class="cardProd__img">
+      <div class="cardProd__badge">${product.badge ?? "Plato"}</div>
+    </div>
+    <div class="cardProd__body">
+      <h3 class="cardProd__title">${product.name}</h3>
+      <p class="cardProd__desc">${product.desc}</p>
+      <div class="cardProd__row">
+        <div class="price">${money(product.price)}</div>
+        <button class="btn btn--primary" data-order="${product.id}" type="button">
+          Pedir este plato
+        </button>
       </div>
-      <div class="cardProd__body">
-        <h3 class="cardProd__title">${product.name}</h3>
-        <p class="cardProd__desc">${product.desc}</p>
-        <div class="cardProd__row">
-          <div>
-            <div class="price">${money(product.price)}</div>
-            <div class="small">Disponible hoy</div>
-          </div>
-          <button class="btn btn--primary" data-add="${product.id}" type="button">Agregar</button>
-        </div>
-      </div>
-    `;
+    </div>
+  `;
     targetEl.appendChild(el);
-}
-
-/***********************
- * CARRITO (LocalStorage)
- ***********************/
-const CART_KEY = "olla_criolla_cart_v1";
-const NOTES_KEY = "olla_criolla_notes_v1";
-const DELIVERY_KEY = "olla_criolla_delivery_v1";
-const ADDRESS_KEY = "olla_criolla_address_v1";
-
-function loadCart() {
-    try {
-        return JSON.parse(localStorage.getItem(CART_KEY)) ? ? {};
-    } catch {
-        return {};
-    }
-}
-
-function saveCart(cart) {
-    localStorage.setItem(CART_KEY, JSON.stringify(cart));
 }
 
 function getProductById(id) {
     const all = [...MENU_DATA.menuDelDia, ...MENU_DATA.topDishes];
     return all.find(p => p.id === id);
-}
-
-function cartCount(cart) {
-    return Object.values(cart).reduce((acc, qty) => acc + qty, 0);
-}
-
-function cartTotal(cart) {
-    return Object.entries(cart).reduce((acc, [id, qty]) => {
-        const p = getProductById(id);
-        return acc + (p ? p.price * qty : 0);
-    }, 0);
-}
-
-function addToCart(id) {
-    const cart = loadCart();
-    cart[id] = (cart[id] ? ? 0) + 1;
-    saveCart(cart);
-    refreshCartUI();
-}
-
-function decFromCart(id) {
-    const cart = loadCart();
-    if (!cart[id]) return;
-    cart[id] -= 1;
-    if (cart[id] <= 0) delete cart[id];
-    saveCart(cart);
-    refreshCartUI();
-}
-
-function removeFromCart(id) {
-    const cart = loadCart();
-    delete cart[id];
-    saveCart(cart);
-    refreshCartUI();
-}
-
-/***********************
- * DRAWER UI
- ***********************/
-const drawer = () => qs("#cartDrawer");
-const drawerBackdrop = () => qs("#drawerBackdrop");
-const btnCloseCart = () => qs("#btnCloseCart");
-const btnCheckout = () => qs("#btnCheckout");
-const cartList = () => qs("#cartList");
-const cartEmpty = () => qs("#cartEmpty");
-const cartTotalEl = () => qs("#cartTotal");
-const cartCountEl = () => qs("#cartCount");
-const drawerSub = () => qs("#drawerSub");
-
-const notesField = () => qs("#notesField");
-const orderNotes = () => qs("#orderNotes");
-const deliveryField = () => qs("#deliveryField");
-const addressBox = () => qs("#addressBox");
-const addressInput = () => qs("#address");
-
-function openDrawer() {
-    drawer().classList.add("is-open");
-    drawer().setAttribute("aria-hidden", "false");
-}
-
-function closeDrawer() {
-    drawer().classList.remove("is-open");
-    drawer().setAttribute("aria-hidden", "true");
-}
-
-function renderCartItems() {
-    const cart = loadCart();
-    const entries = Object.entries(cart);
-
-    const count = cartCount(cart);
-    cartCountEl().textContent = count;
-
-    drawerSub().textContent = count === 0 ? "Agrega algo rico 😄" : `${count} item(s) en tu pedido`;
-
-    const total = cartTotal(cart);
-    cartTotalEl().textContent = money(total);
-
-    if (entries.length === 0) {
-        cartEmpty().hidden = false;
-        cartList().hidden = true;
-        notesField().hidden = true;
-        deliveryField().hidden = true;
-        return;
-    }
-
-    cartEmpty().hidden = true;
-    cartList().hidden = false;
-    notesField().hidden = false;
-    deliveryField().hidden = false;
-
-    cartList().innerHTML = entries.map(([id, qty]) => {
-        const p = getProductById(id);
-        if (!p) return "";
-        return `
-        <div class="cartItem">
-          <div class="cartItem__img" aria-hidden="true"></div>
-          <div class="cartItem__mid">
-            <div class="cartItem__name">${p.name}</div>
-            <div class="cartItem__meta">${money(p.price)} • Subtotal: <strong>${money(p.price * qty)}</strong></div>
-          </div>
-          <div class="cartItem__actions">
-            <div class="qty" aria-label="Cantidad">
-              <button type="button" data-dec="${id}" aria-label="Disminuir">−</button>
-              <span>${qty}</span>
-              <button type="button" data-inc="${id}" aria-label="Aumentar">+</button>
-            </div>
-            <button class="linkDanger" type="button" data-rem="${id}">Eliminar</button>
-          </div>
-        </div>
-      `;
-    }).join("");
-
-    // restaurar campos
-    orderNotes().value = localStorage.getItem(NOTES_KEY) ? ? "";
-    addressInput().value = localStorage.getItem(ADDRESS_KEY) ? ? "";
-
-    // delivery mode
-    const deliveryMode = localStorage.getItem(DELIVERY_KEY) ? ? "recojo";
-    setDeliveryMode(deliveryMode);
-}
-
-function refreshCartUI() {
-    renderCartItems();
-    updateWhatsLinks(); // actualiza links "Pedir por WhatsApp" con o sin carrito
-}
-
-/***********************
- * DELIVERY MODE
- ***********************/
-function setDeliveryMode(mode) {
-    localStorage.setItem(DELIVERY_KEY, mode);
-
-    const buttons = qsa(".segBtn");
-    buttons.forEach(b => b.classList.toggle("segBtn--active", b.dataset.delivery === mode));
-
-    if (mode === "delivery") {
-        addressBox().hidden = false;
-    } else {
-        addressBox().hidden = true;
-        // No borramos dirección, solo ocultamos.
-    }
-}
-
-/***********************
- * WHATSAPP MESSAGE
- ***********************/
-function buildWhatsAppMessage() {
-    const cart = loadCart();
-    const entries = Object.entries(cart);
-    const total = cartTotal(cart);
-
-    const now = new Date();
-    const dateStr = now.toLocaleString("es-PE", {
-        dateStyle: "medium",
-        timeStyle: "short"
-    });
-
-    const deliveryMode = localStorage.getItem(DELIVERY_KEY) ? ? "recojo";
-    const notes = (localStorage.getItem(NOTES_KEY) ? ? "").trim();
-    const address = (localStorage.getItem(ADDRESS_KEY) ? ? "").trim();
-
-    let lines = [];
-    lines.push(`Hola 👋, quiero hacer un pedido en *${RESTAURANT.name}*`);
-    lines.push(`🗓 ${dateStr}`);
-    lines.push("");
-    lines.push("*Pedido:*");
-
-    if (entries.length === 0) {
-        lines.push("- (Aún no agregué productos, quisiera consultar el menú del día)");
-    } else {
-        for (const [id, qty] of entries) {
-            const p = getProductById(id);
-            if (!p) continue;
-            lines.push(`- ${qty}x ${p.name} — ${money(p.price * qty)}`);
-        }
-        lines.push("");
-        lines.push(`*Total estimado:* ${money(total)}`);
-    }
-
-    lines.push("");
-    lines.push(`*Entrega:* ${deliveryMode === "delivery" ? "🚴 Delivery" : "🏃 Recojo en local"}`);
-
-    if (deliveryMode === "delivery") {
-        lines.push(`*Dirección:* ${address || "(por definir)"} `);
-    }
-
-    if (notes) {
-        lines.push(`*Indicaciones:* ${notes}`);
-    }
-
-    lines.push("");
-    lines.push("¿Me confirmas disponibilidad y tiempo aprox? 🙌");
-
-    return lines.join("\n");
-}
-
-function getWhatsAppUrl() {
-    const msg = buildWhatsAppMessage();
-    const encoded = encodeURIComponent(msg);
-    return `https://wa.me/${RESTAURANT.whatsappNumber}?text=${encoded}`;
-}
-
-function updateWhatsLinks() {
-    const url = getWhatsAppUrl();
-
-    const ids = ["btnWhatsHero", "btnWhatsCTA", "fabWhatsapp", "btnWhatsMobile"];
-    ids.forEach(id => {
-        const el = qs(`#${id}`);
-        if (el) el.href = url;
-    });
-
-    // Footer phone
-    const footerPhone = qs("#footerPhone");
-    if (footerPhone) footerPhone.textContent = `+${RESTAURANT.whatsappNumber}`;
 }
 
 /***********************
@@ -449,7 +232,6 @@ function renderScheduleUI() {
         badge.classList.add("badge--closed");
     }
 
-    // Botón "Cómo llegar"
     const howToGo = qs("#btnHowToGo");
     if (howToGo) howToGo.href = RESTAURANT.mapsQueryUrl;
 }
@@ -458,85 +240,83 @@ function renderScheduleUI() {
  * NAV MÓVIL
  ***********************/
 function setupMobileNav() {
-    const btn = qs("#btnHamburger");
-    const mobileNav = qs("#mobileNav");
+    const btn = document.querySelector("#btnHamburger");
+    const mobileNav = document.querySelector("#mobileNav");
     if (!btn || !mobileNav) return;
 
     btn.addEventListener("click", () => {
-        const isHidden = mobileNav.hasAttribute("hidden");
-        if (isHidden) mobileNav.removeAttribute("hidden");
-        else mobileNav.setAttribute("hidden", "");
+        mobileNav.classList.toggle("is-open");
     });
 
-    // cerrar al click en link
-    qsa("#mobileNav a").forEach(a => a.addEventListener("click", () => {
-        mobileNav.setAttribute("hidden", "");
-    }));
+    // Cierra cuando tocas un link del menú
+    mobileNav.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", () => mobileNav.classList.remove("is-open"));
+    });
+
+    // Si se agranda la pantalla, lo cierra
+    window.addEventListener("resize", () => {
+        if (window.innerWidth > 980) {
+            mobileNav.classList.remove("is-open");
+        }
+    });
+}
+
+
+/***********************
+ * DARK MODE
+ ***********************/
+const THEME_KEY = "olla_theme_v1";
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem(THEME_KEY, theme);
+
+    const icon = qs("#themeIcon");
+    const text = qs("#themeText");
+    if (theme === "dark") {
+        if (icon) icon.textContent = "☀️";
+        if (text) text.textContent = "Claro";
+    } else {
+        if (icon) icon.textContent = "🌙";
+        if (text) text.textContent = "Oscuro";
+    }
+}
+
+function initTheme() {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved === "light" || saved === "dark") {
+        applyTheme(saved);
+        return;
+    }
+
+    // si no hay preferencia guardada, usamos la del sistema
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    applyTheme(prefersDark ? "dark" : "light");
+}
+
+function setupThemeToggle() {
+    const btn = qs("#themeToggle");
+    if (!btn) return;
+
+    btn.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme") || "light";
+        applyTheme(current === "dark" ? "light" : "dark");
+    });
 }
 
 /***********************
- * EVENTOS
+ * EVENTS
  ***********************/
 function setupEvents() {
-    // Agregar al carrito (delegación)
+    // Pedir plato específico
     document.addEventListener("click", (e) => {
-        const add = e.target.closest("[data-add]");
-        if (add) {
-            addToCart(add.dataset.add);
-            return;
-        }
+        const orderBtn = e.target.closest("[data-order]");
+        if (!orderBtn) return;
 
-        const inc = e.target.closest("[data-inc]");
-        if (inc) {
-            addToCart(inc.dataset.inc);
-            return;
-        }
+        const p = getProductById(orderBtn.dataset.order);
+        if (!p) return;
 
-        const dec = e.target.closest("[data-dec]");
-        if (dec) {
-            decFromCart(dec.dataset.dec);
-            return;
-        }
-
-        const rem = e.target.closest("[data-rem]");
-        if (rem) {
-            removeFromCart(rem.dataset.rem);
-            return;
-        }
-
-        const openCart = e.target.closest("#btnOpenCart, #btnOpenCartHero, #btnOpenCartCTA, #btnOpenCartMobile");
-        if (openCart) {
-            openDrawer();
-            return;
-        }
-    });
-
-    // Drawer close
-    drawerBackdrop().addEventListener("click", closeDrawer);
-    btnCloseCart().addEventListener("click", closeDrawer);
-
-    // Notas y dirección persistentes
-    orderNotes().addEventListener("input", () => {
-        localStorage.setItem(NOTES_KEY, orderNotes().value);
-        updateWhatsLinks();
-    });
-
-    addressInput().addEventListener("input", () => {
-        localStorage.setItem(ADDRESS_KEY, addressInput().value);
-        updateWhatsLinks();
-    });
-
-    // Segmented delivery
-    qsa(".segBtn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            setDeliveryMode(btn.dataset.delivery);
-            updateWhatsLinks();
-        });
-    });
-
-    // Checkout WhatsApp
-    btnCheckout().addEventListener("click", () => {
-        window.open(getWhatsAppUrl(), "_blank", "noopener");
+        window.open(waUrl(buildDishWhatsAppMessage(p)), "_blank", "noopener");
     });
 }
 
@@ -544,33 +324,25 @@ function setupEvents() {
  * INIT
  ***********************/
 function init() {
-    // Año footer
     qs("#year").textContent = new Date().getFullYear();
 
-    // Render data
+    initTheme();
+    setupThemeToggle();
+
+    // Render menu
     const menuDiaGrid = qs("#menuDiaGrid");
     const topGrid = qs("#topDishesGrid");
 
     MENU_DATA.menuDelDia.forEach(p => renderProductCard(p, menuDiaGrid));
     MENU_DATA.topDishes.forEach(p => renderProductCard(p, topGrid));
 
-    // Horario / estado
     renderScheduleUI();
+    updateGlobalWhatsLinks();
 
-    // WhatsApp links
-    updateWhatsLinks();
-
-    // Drawer initial UI
-    refreshCartUI();
-
-    // Mobile nav
     setupMobileNav();
-
-    // Events
     setupEvents();
 
-    // Re-render estado cada minuto (por si justo cambia de abierto/cerrado)
-    setInterval(renderScheduleUI, 60 * 1000);
+    setInterval(renderScheduleUI, 60000);
 }
 
 document.addEventListener("DOMContentLoaded", init);
