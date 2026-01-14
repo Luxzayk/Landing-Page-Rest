@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>La Olla Criolla | Almuerzos Caseros</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="container topbar__inner">
+      <div class="topbar__left">
+        <span id="openBadge" class="badge badge--closed">Cargando horario…</span>
+        <span class="topbar__sep">•</span>
+        <span id="todayHours" class="topbar__text">Horario: —</span>
+      </div>
+      <div class="topbar__right">
+        <span class="topbar__text">📍 Huacho, Lima</span>
+        <span class="topbar__sep">•</span>
+        <a class="topbar__link" href="#ubicacion">Ver mapa</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="brand" href="#inicio" aria-label="Inicio">
+        <div class="brand__logo">🍲</div>
+        <div class="brand__text">
+          <div class="brand__name">La Olla Criolla</div>
+          <div class="brand__tag">Almuerzos caseros • Atención rápida</div>
+        </div>
+      </a>
+
+      <nav class="nav">
+        <a href="#menu-dia">Menú del día</a>
+        <a href="#mas-pedido">Más pedido</a>
+        <a href="#nosotros">Nosotros</a>
+        <a href="#ubicacion">Ubicación</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+
+      <div class="header__actions">
+        <button class="btn btn--ghost" id="btnOpenCart" type="button">
+          🛒 Carrito <span id="cartCount" class="pill">0</span>
+        </button>
+        <a class="btn btn--whatsapp" id="btnWhatsHero" href="#" target="_blank" rel="noopener">
+          Pedir por WhatsApp
+        </a>
+      </div>
+
+      <button class="hamburger" id="btnHamburger" aria-label="Abrir menú" type="button">☰</button>
+    </div>
+
+    <div class="mobileNav" id="mobileNav" hidden>
+      <a href="#menu-dia">Menú del día</a>
+      <a href="#mas-pedido">Más pedido</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href="#ubicacion">Ubicación</a>
+      <a href="#contacto">Contacto</a>
+      <button class="btn btn--ghost w-100" id="btnOpenCartMobile" type="button">🛒 Ver carrito</button>
+      <a class="btn btn--whatsapp w-100" id="btnWhatsMobile" href="#" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <main id="inicio" class="hero">
+    <div class="container hero__grid">
+      <section class="hero__copy">
+        <h1>Almuerzos caseros todos los días, <span class="accent">recién hechos</span>.</h1>
+        <p class="lead">
+          Sabor criollo, porciones generosas y atención rápida. Ideal para tu pausa de mediodía.
+        </p>
+
+        <div class="hero__chips">
+          <span class="chip">⏱ 25–35 min aprox.</span>
+          <span class="chip">🚴 Delivery & 🏃 Recojo</span>
+          <span class="chip">💳 Yape / Plin</span>
+          <span class="chip">🧼 Higiene y calidad</span>
+        </div>
+
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="#menu-dia">Ver menú del día</a>
+          <button class="btn btn--ghost" id="btnOpenCartHero" type="button">Ver carrito</button>
+        </div>
+
+        <div class="hero__note">
+          <span id="statusLine">—</span>
+        </div>
+      </section>
+
+      <aside class="hero__card">
+        <div class="hero__image" aria-hidden="true">
+          <div class="hero__imageOverlay"></div>
+          <div class="hero__imageText">
+            <div class="hero__imageTitle">Menú del día</div>
+            <div class="hero__imageSub">Sopa + Segundo + Bebida</div>
+          </div>
+        </div>
+
+        <div class="hero__miniInfo">
+          <div class="miniRow">
+            <div class="miniLabel">Horario:</div>
+            <div class="miniValue" id="hoursCompact">—</div>
+          </div>
+          <div class="miniRow">
+            <div class="miniLabel">Pedidos:</div>
+            <div class="miniValue">WhatsApp / Recojo / Delivery</div>
+          </div>
+          <div class="miniRow">
+            <div class="miniLabel">Dirección:</div>
+            <div class="miniValue">Av. Primavera 245, Huacho</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Menu del día -->
+  <section id="menu-dia" class="section">
+    <div class="container">
+      <div class="section__head">
+        <h2>Menú del día</h2>
+        <p>Opciones disponibles de <strong>lunes a sábado</strong>. Hasta agotar stock.</p>
+      </div>
+
+      <div class="grid grid--cards" id="menuDiaGrid">
+        <!-- JS render -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Más pedido -->
+  <section id="mas-pedido" class="section section--alt">
+    <div class="container">
+      <div class="section__head">
+        <h2>Platos más pedidos</h2>
+        <p>Los clásicos que siempre salen. Puedes agregarlos al carrito al toque.</p>
+      </div>
+
+      <div class="grid grid--cards" id="topDishesGrid">
+        <!-- JS render -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Beneficios -->
+  <section class="section">
+    <div class="container">
+      <div class="section__head">
+        <h2>¿Por qué elegirnos?</h2>
+        <p>Almuerzo rico, rápido y con la confianza de un restaurante familiar.</p>
+      </div>
+
+      <div class="grid grid--features">
+        <div class="feature">
+          <div class="feature__icon">🍛</div>
+          <div class="feature__title">Comida criolla</div>
+          <div class="feature__text">Recetas caseras y sabor de barrio, como debe ser.</div>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">⚡</div>
+          <div class="feature__title">Atención rápida</div>
+          <div class="feature__text">Pensado para tu hora de almuerzo: orden y velocidad.</div>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">🧼</div>
+          <div class="feature__title">Higiene y calidad</div>
+          <div class="feature__text">Cocina limpia, ingredientes frescos y cuidado en cada plato.</div>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">💳</div>
+          <div class="feature__title">Pagos fáciles</div>
+          <div class="feature__text">Aceptamos Yape/Plin o efectivo (según coordines).</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nosotros + Misión/Visión -->
+  <section id="nosotros" class="section section--alt">
+    <div class="container twoCol">
+      <div class="twoCol__left">
+        <h2>Nosotros</h2>
+        <p class="para">
+          En <strong>La Olla Criolla</strong> preparamos almuerzos caseros con un enfoque simple:
+          buena sazón, porciones honestas y atención rápida. Somos un negocio familiar que cocina
+          como en casa, con ingredientes frescos y cariño.
+        </p>
+
+        <div class="cardRow">
+          <div class="card">
+            <h3>🎯 Misión</h3>
+            <p>Brindar almuerzos caseros, ricos y accesibles, cuidando la calidad y la atención.</p>
+          </div>
+          <div class="card">
+            <h3>🌤 Visión</h3>
+            <p>Ser el restaurante de confianza del barrio: el lugar al que vuelves por el sabor.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="twoCol__right">
+        <div class="photoCard" aria-hidden="true">
+          <div class="photoCard__img">
+            <div class="photoCard__overlay"></div>
+            <div class="photoCard__txt">
+              <div class="photoCard__title">Almuerzo listo</div>
+              <div class="photoCard__sub">Sopa + Segundo + Bebida</div>
+            </div>
+          </div>
+          <div class="photoCard__meta">
+            <div class="metaItem"><span>📌</span> Atención: 12:00 – 16:00</div>
+            <div class="metaItem"><span>✅</span> Recojo / Delivery</div>
+            <div class="metaItem"><span>📲</span> Pedidos por WhatsApp</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ubicación -->
+  <section id="ubicacion" class="section">
+    <div class="container">
+      <div class="section__head">
+        <h2>Ubicación</h2>
+        <p>Visítanos o pide por WhatsApp. Si estás cerca, ¡te atendemos rapidísimo!</p>
+      </div>
+
+      <div class="mapGrid">
+        <div class="mapInfo">
+          <div class="infoBox">
+            <div class="infoTitle">📍 Dirección</div>
+            <div class="infoText">Av. Primavera 245, Huacho (a 1 cuadra de la Plaza)</div>
+          </div>
+          <div class="infoBox">
+            <div class="infoTitle">🚴 Delivery</div>
+            <div class="infoText">Zonas cercanas: Centro, Santa María, Hualmay (coordinar por WhatsApp).</div>
+          </div>
+          <div class="infoBox">
+            <div class="infoTitle">🕒 Horario</div>
+            <div class="infoText" id="hoursLong">Lun–Sáb: 12:00–16:00</div>
+          </div>
+          <a class="btn btn--primary" id="btnHowToGo" href="#" target="_blank" rel="noopener">Cómo llegar</a>
+        </div>
+
+        <div class="mapWrap">
+          <!-- Cambia el src por el mapa de tu negocio real luego -->
+          <iframe
+            title="Mapa del restaurante"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3900.0000000000005!2d-77.61000000000001!3d-11.105000000000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0000000000000000%3A0x0000000000000000!2sHuacho!5e0!3m2!1ses!2spe!4v0000000000000"
+            allowfullscreen=""
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contacto -->
+  <section id="contacto" class="section section--cta">
+    <div class="container cta">
+      <div class="cta__text">
+        <h2>¿Listo para almorzar?</h2>
+        <p>Arma tu pedido en el carrito y envíalo por WhatsApp en segundos.</p>
+      </div>
+      <div class="cta__actions">
+        <button class="btn btn--ghost" id="btnOpenCartCTA" type="button">🛒 Ver carrito</button>
+        <a class="btn btn--whatsapp" id="btnWhatsCTA" href="#" target="_blank" rel="noopener">Pedir por WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div>
+        <div class="footer__brand">🍲 La Olla Criolla</div>
+        <div class="footer__text">Almuerzos caseros • Huacho</div>
+      </div>
+      <div>
+        <div class="footer__title">Links</div>
+        <a href="#menu-dia">Menú del día</a>
+        <a href="#nosotros">Nosotros</a>
+        <a href="#ubicacion">Ubicación</a>
+      </div>
+      <div>
+        <div class="footer__title">Contacto</div>
+        <div class="footer__text">📲 WhatsApp: <span id="footerPhone">—</span></div>
+        <div class="footer__text">🕒 Lun–Sáb: 12:00–16:00</div>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <span>© <span id="year"></span> La Olla Criolla. Todos los derechos reservados.</span>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp -->
+  <a class="fab" id="fabWhatsapp" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+    💬
+  </a>
+
+  <!-- Cart Drawer -->
+  <div class="drawer" id="cartDrawer" aria-hidden="true">
+    <div class="drawer__backdrop" id="drawerBackdrop"></div>
+    <aside class="drawer__panel" role="dialog" aria-modal="true" aria-label="Carrito de compras">
+      <div class="drawer__header">
+        <div>
+          <div class="drawer__title">Tu carrito</div>
+          <div class="drawer__sub" id="drawerSub">—</div>
+        </div>
+        <button class="iconBtn" id="btnCloseCart" aria-label="Cerrar carrito" type="button">✕</button>
+      </div>
+
+      <div class="drawer__body">
+        <div id="cartEmpty" class="empty">
+          <div class="empty__icon">🛒</div>
+          <div class="empty__title">Tu carrito está vacío</div>
+          <div class="empty__text">Agrega un menú del día o un plato para continuar.</div>
+          <a class="btn btn--primary" href="#menu-dia" id="btnGoMenu">Ver menú</a>
+        </div>
+
+        <div id="cartList" class="cartList" hidden></div>
+
+        <div class="field" id="notesField" hidden>
+          <label for="orderNotes">Indicaciones para la cocina (opcional)</label>
+          <textarea id="orderNotes" rows="3" placeholder="Ej: sin cebolla, poco ají, bien cocido…"></textarea>
+        </div>
+
+        <div class="fieldGrid" id="deliveryField" hidden>
+          <div class="field">
+            <label>Tipo de entrega</label>
+            <div class="segmented" role="group" aria-label="Tipo de entrega">
+              <button type="button" class="segBtn segBtn--active" data-delivery="recojo">🏃 Recojo</button>
+              <button type="button" class="segBtn" data-delivery="delivery">🚴 Delivery</button>
+            </div>
+          </div>
+          <div class="field" id="addressBox" hidden>
+            <label for="address">Dirección (solo delivery)</label>
+            <input id="address" type="text" placeholder="Av. / Calle, número, referencia…" />
+          </div>
+        </div>
+      </div>
+
+      <div class="drawer__footer">
+        <div class="totals">
+          <div class="totals__row">
+            <span>Total</span>
+            <strong id="cartTotal">S/ 0.00</strong>
+          </div>
+          <div class="totals__hint">El pago se coordina por WhatsApp (Yape/Plin/Efectivo).</div>
+        </div>
+        <button class="btn btn--whatsapp w-100" id="btnCheckout" type="button">
+          Finalizar pedido por WhatsApp
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
