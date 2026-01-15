@@ -6,15 +6,33 @@ const RESTAURANT = {
     city: "Huacho",
     address: "Av. Primavera 245, Huacho",
     // ✅ Cambia esto por el número real (Perú: 51 + número). Ej: 51987654321
-    whatsappNumber: "51999999999",
+    whatsappNumber: "51933566289",
     // Horario: Lun(1) .. Dom(0)
     schedule: {
-        1: { open: "12:00", close: "16:00" }, // Lunes
-        2: { open: "12:00", close: "16:00" }, // Martes
-        3: { open: "12:00", close: "16:00" }, // Miércoles
-        4: { open: "12:00", close: "16:00" }, // Jueves
-        5: { open: "12:00", close: "16:00" }, // Viernes
-        6: { open: "12:00", close: "16:00" }, // Sábado
+        1: {
+            open: "12:00",
+            close: "16:00"
+        }, // Lunes
+        2: {
+            open: "12:00",
+            close: "16:00"
+        }, // Martes
+        3: {
+            open: "12:00",
+            close: "16:00"
+        }, // Miércoles
+        4: {
+            open: "12:00",
+            close: "16:00"
+        }, // Jueves
+        5: {
+            open: "12:00",
+            close: "16:00"
+        }, // Viernes
+        6: {
+            open: "12:00",
+            close: "16:00"
+        }, // Sábado
         0: null, // Domingo cerrado
     },
     mapsQueryUrl: "https://www.google.com/maps/search/?api=1&query=Av.%20Primavera%20245%20Huacho"
@@ -30,6 +48,7 @@ const MENU_DATA = {
             desc: "Sopa de casa + Seco de pollo con frejoles + Bebida (chicha o maracuyá).",
             price: 14.00,
             badge: "Menú",
+            image: "images/menu-criollo-clasico.jpg"
         },
         {
             id: "md-002",
@@ -37,6 +56,7 @@ const MENU_DATA = {
             desc: "Sopa + Arroz con pato (porción del día) + Bebida.",
             price: 16.00,
             badge: "Menú",
+            image: "images/arroz-con-pato.jpg"
         },
         {
             id: "md-003",
@@ -44,6 +64,7 @@ const MENU_DATA = {
             desc: "Sopa + Pollo a la plancha con ensalada + Bebida.",
             price: 13.00,
             badge: "Menú",
+            image: "images/menu-ligero.jpg"
         },
         {
             id: "md-004",
@@ -51,6 +72,7 @@ const MENU_DATA = {
             desc: "Sopa + Pescado frito con arroz + Bebida.",
             price: 15.00,
             badge: "Menú",
+            image: "images/pescado-frito.jpg"
         },
     ],
     topDishes: [{
@@ -59,6 +81,7 @@ const MENU_DATA = {
             desc: "Clásico lomo con papas, arroz y su toque criollo.",
             price: 22.00,
             badge: "⭐ Popular",
+            image: "images/lomo-saltado.jpg"
         },
         {
             id: "pd-102",
@@ -66,6 +89,7 @@ const MENU_DATA = {
             desc: "Cremoso y suave, con arroz y papa sancochada.",
             price: 18.00,
             badge: "Casero",
+            image: "images/aji-de-gallina.jpg"
         },
         {
             id: "pd-103",
@@ -73,6 +97,7 @@ const MENU_DATA = {
             desc: "Tallarines con verduras y carne al wok.",
             price: 20.00,
             badge: "Rápido",
+            image: "images/tallarin-saltado.jpg"
         },
         {
             id: "pd-104",
@@ -80,6 +105,7 @@ const MENU_DATA = {
             desc: "Arroz chaufa con pollo, huevo y cebolla china.",
             price: 17.00,
             badge: "Top",
+            image: "images/arroz-chaufa.jpg"
         },
     ],
 };
@@ -103,7 +129,10 @@ function getTodaySchedule() {
 
 function isOpenNow() {
     const sched = getTodaySchedule();
-    if (!sched) return { open: false, msg: "Hoy estamos cerrados. Atendemos de lunes a sábado." };
+    if (!sched) return {
+        open: false,
+        msg: "Hoy estamos cerrados. Atendemos de lunes a sábado."
+    };
 
     const now = new Date();
     const nowMin = now.getHours() * 60 + now.getMinutes();
@@ -116,9 +145,15 @@ function isOpenNow() {
         const h = Math.floor(minsLeft / 60);
         const m = minsLeft % 60;
         const leftStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
-        return { open: true, msg: `🟢 Abierto ahora • Cerramos en ${leftStr}.` };
+        return {
+            open: true,
+            msg: `🟢 Abierto ahora • Cerramos en ${leftStr}.`
+        };
     } else {
-        return { open: false, msg: `🔴 Cerrado ahora • Abrimos hoy de ${sched.open} a ${sched.close}.` };
+        return {
+            open: false,
+            msg: `🔴 Cerrado ahora • Abrimos hoy de ${sched.open} a ${sched.close}.`
+        };
     }
 }
 
@@ -128,7 +163,10 @@ function isOpenNow() {
 function buildGeneralWhatsAppMessage() {
     const st = isOpenNow();
     const now = new Date();
-    const dateStr = now.toLocaleString("es-PE", { dateStyle: "medium", timeStyle: "short" });
+    const dateStr = now.toLocaleString("es-PE", {
+        dateStyle: "medium",
+        timeStyle: "short"
+    });
 
     const lines = [
         `Hola 👋, quiero consultar el *menú del día* en *${RESTAURANT.name}*`,
@@ -143,7 +181,10 @@ function buildGeneralWhatsAppMessage() {
 
 function buildDishWhatsAppMessage(product) {
     const now = new Date();
-    const dateStr = now.toLocaleString("es-PE", { dateStyle: "medium", timeStyle: "short" });
+    const dateStr = now.toLocaleString("es-PE", {
+        dateStyle: "medium",
+        timeStyle: "short"
+    });
 
     const lines = [
         `Hola 👋, quiero pedir este plato en *${RESTAURANT.name}*:`,
@@ -180,7 +221,9 @@ function renderProductCard(product, targetEl) {
     const el = document.createElement("article");
     el.className = "cardProd";
     el.innerHTML = `
-    <div class="cardProd__img">
+    <div class="cardProd__img" style="background-image:
+    linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.45)),
+    url('${product.image}');">
       <div class="cardProd__badge">${product.badge ?? "Plato"}</div>
     </div>
     <div class="cardProd__body">
