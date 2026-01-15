@@ -344,8 +344,11 @@ a {
 .hero__image {
     height: 200px;
     position: relative;
-    background: radial-gradient(800px 250px at 40% 20%, rgba(209, 73, 63, .28), transparent 60%), radial-gradient(800px 250px at 80% 70%, rgba(37, 211, 102, .18), transparent 55%), linear-gradient(135deg, #2a2a2a 0%, #151515 100%);
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, .25), rgba(0, 0, 0, .65)),
+        url("images/hero.jpg") center / cover no-repeat;
 }
+
 
 .hero__imageOverlay {
     position: absolute;
@@ -592,8 +595,11 @@ html[data-theme="dark"] .cardProd__badge {
 .photoCard__img {
     height: 220px;
     position: relative;
-    background: radial-gradient(700px 260px at 30% 30%, rgba(37, 211, 102, .22), transparent 60%), radial-gradient(700px 260px at 70% 60%, rgba(209, 73, 63, .22), transparent 55%), linear-gradient(135deg, #2a2a2a 0%, #151515 100%);
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, .25), rgba(0, 0, 0, .65)),
+        url("images/local.jpg") center / cover no-repeat;
 }
+
 
 .photoCard__overlay {
     position: absolute;

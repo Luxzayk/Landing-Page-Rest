@@ -47,7 +47,6 @@ const MENU_DATA = {
             name: "Menú Criollo Clásico",
             desc: "Sopa de casa + Seco de pollo con frejoles + Bebida (chicha o maracuyá).",
             price: 14.00,
-            badge: "Menú",
             image: "images/menu-criollo-clasico.jpg"
         },
         {
@@ -55,7 +54,6 @@ const MENU_DATA = {
             name: "Menú Norteño",
             desc: "Sopa + Arroz con pato (porción del día) + Bebida.",
             price: 16.00,
-            badge: "Menú",
             image: "images/arroz-con-pato.jpg"
         },
         {
@@ -63,7 +61,6 @@ const MENU_DATA = {
             name: "Menú Ligero",
             desc: "Sopa + Pollo a la plancha con ensalada + Bebida.",
             price: 13.00,
-            badge: "Menú",
             image: "images/menu-ligero.jpg"
         },
         {
@@ -71,7 +68,6 @@ const MENU_DATA = {
             name: "Menú Marino",
             desc: "Sopa + Pescado frito con arroz + Bebida.",
             price: 15.00,
-            badge: "Menú",
             image: "images/pescado-frito.jpg"
         },
     ],
@@ -80,7 +76,6 @@ const MENU_DATA = {
             name: "Lomo Saltado",
             desc: "Clásico lomo con papas, arroz y su toque criollo.",
             price: 22.00,
-            badge: "⭐ Popular",
             image: "images/lomo-saltado.jpg"
         },
         {
@@ -88,7 +83,6 @@ const MENU_DATA = {
             name: "Ají de Gallina",
             desc: "Cremoso y suave, con arroz y papa sancochada.",
             price: 18.00,
-            badge: "Casero",
             image: "images/aji-de-gallina.jpg"
         },
         {
@@ -96,7 +90,6 @@ const MENU_DATA = {
             name: "Tallarín Saltado",
             desc: "Tallarines con verduras y carne al wok.",
             price: 20.00,
-            badge: "Rápido",
             image: "images/tallarin-saltado.jpg"
         },
         {
@@ -104,7 +97,6 @@ const MENU_DATA = {
             name: "Chaufa de Pollo",
             desc: "Arroz chaufa con pollo, huevo y cebolla china.",
             price: 17.00,
-            badge: "Top",
             image: "images/arroz-chaufa.jpg"
         },
     ],
@@ -224,7 +216,7 @@ function renderProductCard(product, targetEl) {
     <div class="cardProd__img" style="background-image:
     linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.45)),
     url('${product.image}');">
-      <div class="cardProd__badge">${product.badge ?? "Plato"}</div>
+      <div class="cardProd__badge">${product.badge ?? ""}</div>
     </div>
     <div class="cardProd__body">
       <h3 class="cardProd__title">${product.name}</h3>
